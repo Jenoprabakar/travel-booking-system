@@ -1,0 +1,63 @@
+<!ELEMENT TravelBookingSystem (Booking+)>
+
+<!ELEMENT Booking (Customer, Itinerary, Payment)>
+<!ATTLIST Booking 
+    id ID #REQUIRED
+    status (confirmed|pending|cancelled) "pending">
+
+<!ELEMENT Customer (Name, Email, Phone)>
+<!ELEMENT Name (#PCDATA)>
+<!ELEMENT Email (#PCDATA)>
+<!ELEMENT Phone (#PCDATA)>
+
+<!ELEMENT Itinerary (Trip+)>
+
+<!ELEMENT Trip (Departure?, Arrival?, CheckIn?, CheckOut?, Property?, Room?, PickUp?, DropOff?, Vehicle?, Carrier?, FlightNumber?, Class?)>
+<!ATTLIST Trip 
+    type (flight|hotel|car|train|cruise) #REQUIRED
+    id ID #REQUIRED>
+
+<!ELEMENT Departure (Location, DateTime)>
+<!ELEMENT Arrival (Location, DateTime)>
+<!ELEMENT CheckIn (#PCDATA)>
+<!ELEMENT CheckOut (#PCDATA)>
+
+<!ELEMENT Location (#PCDATA)>
+<!ATTLIST Location
+    code CDATA #IMPLIED>
+
+<!ELEMENT DateTime (#PCDATA)>
+
+<!ELEMENT Property (Name, Address, Rating)>
+<!ELEMENT Address (Street, City, PostalCode, Country)>
+<!ELEMENT Street (#PCDATA)>
+<!ELEMENT City (#PCDATA)>
+<!ELEMENT PostalCode (#PCDATA)>
+<!ELEMENT Country (#PCDATA)>
+<!ELEMENT Rating (#PCDATA)>
+
+<!ELEMENT Room (Guests, BedType)>
+<!ATTLIST Room
+    type (standard|deluxe|suite|penthouse) "standard">
+<!ELEMENT Guests (#PCDATA)>
+<!ELEMENT BedType (#PCDATA)>
+
+<!ELEMENT PickUp (Location, DateTime)>
+<!ELEMENT DropOff (Location, DateTime)>
+
+<!ELEMENT Vehicle (Make, Model, Type)>
+<!ELEMENT Make (#PCDATA)>
+<!ELEMENT Model (#PCDATA)>
+<!ELEMENT Type (#PCDATA)>
+
+<!ELEMENT Carrier (#PCDATA)>
+<!ELEMENT FlightNumber (#PCDATA)>
+<!ELEMENT Class (#PCDATA)>
+
+<!ELEMENT Payment (Method, Currency, TotalAmount, Details?)>
+<!ELEMENT Method (#PCDATA)>
+<!ELEMENT Currency (#PCDATA)>
+<!ELEMENT TotalAmount (#PCDATA)>
+<!ELEMENT Details (CardType?, LastFourDigits?)>
+<!ELEMENT CardType (#PCDATA)>
+<!ELEMENT LastFourDigits (#PCDATA)>

@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Top Places to Visit</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        header {
+            padding: 10px;
+            text-align: right;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        
+        .places-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+            table-layout: fixed; /* Fixed layout to prevent column width changes */
+        }
+        
+        .places-table th, .places-table td {
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+        }
+        
+        .places-table thead tr {
+            background-color: #8541dd;
+            color: white;
+            text-align: left;
+        }
+        
+        .places-table tbody tr {
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .places-table tbody tr:nth-of-type(even) {
+            background-color: #f3f3f3;
+        }
+        
+        .places-table tbody tr:last-of-type {
+            border-bottom: 2px solid#8541dd;
+        }
+        
+        .selection-btn {
+            background-color: #8541dd;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .selection-btn:hover {
+            background-color: #8541dd;
+        }
+        
+        /* Column widths */
+        .places-table th:nth-child(1),
+        .places-table td:nth-child(1) {
+            width: 15%;
+        }
+        
+        .places-table th:nth-child(2),
+        .places-table td:nth-child(2) {
+            width: 30%;
+        }
+        
+        .places-table th:nth-child(3),
+        .places-table td:nth-child(3) {
+            width: 55%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="homepage.html" style="color: white;">Home</a> |
+            <a href="about us.html" style="color: white;">About Us</a> | 
+            <a href="contact.html" style="color: white;">Contact</a> | 
+            <a href="userlogin.html" style="color: white;">Login/Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 id="country-heading">Top Places to Visit</h1>
+        
+        <table class="places-table">
+            <thead>
+                <tr>
+                    <th>Select</th>
+                    <th>Place</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody id="places-list">
+                <!-- Places will be added dynamically -->
+            </tbody>
+        </table>
+        
+        <button class="selection-btn" onclick="proceedWithSelection()">Proceed with Selection</button>
+    </div>
+
+    <script>
+        // Get country parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedCountry = urlParams.get('country');
+        
+        // Update heading with selected country
+        document.getElementById('country-heading').textContent = `Top Places to Visit in ${selectedCountry || ''}`;
+        
+        // Database of places for each country
+        const placesDatabase = {
+            "China": [
+                { name: "Great Wall of China", description: "One of the world's most iconic structures, stretching over 13,000 miles." },
+                { name: "Forbidden City", description: "Imperial palace complex in Beijing with nearly 1000 buildings." },
+                { name: "Terracotta Army", description: "Collection of life-sized sculptures depicting Qin Shi Huang's army." },
+                { name: "Potala Palace", description: "Historic palace in Lhasa, Tibet." },
+                { name: "Zhangjiajie National Forest Park", description: "Inspiration for Avatar's floating mountains." },
+                { name: "The Bund", description: "Famous waterfront in Shanghai." },
+                { name: "Summer Palace", description: "Vast ensemble of lakes, gardens, and palaces in Beijing." },
+                { name: "Li River", description: "Famous for its scenic karst landscape." },
+                { name: "West Lake", description: "A famous fresh water lake in Hangzhou." },
+                { name: "Yellow Mountains", description: "Known for stunning scenery, sunrises, and granite peaks." }
+            ],
+            "Japan": [
+                { name: "Mount Fuji", description: "Japan's highest mountain and an iconic symbol of the country." },
+                { name: "Kyoto Temples", description: "Historic city with over 1,600 Buddhist temples and 400 Shinto shrines." },
+                { name: "Tokyo Tower", description: "Communications and observation tower in Tokyo." },
+                { name: "Osaka Castle", description: "Famous historic castle in Osaka." },
+                { name: "Nara Park", description: "Home to hundreds of freely roaming deer." },
+                { name: "Himeji Castle", description: "UNESCO World Heritage Site and Japan's best-preserved feudal castle." },
+                { name: "Arashiyama Bamboo Grove", description: "Magical bamboo forest in Kyoto." },
+                { name: "Okinawa", description: "Tropical islands known for beaches and coral reefs." },
+                { name: "Senso-ji Temple", description: "Tokyo's oldest and most colorful temple." },
+                { name: "Shibuya Crossing", description: "The world's busiest pedestrian crossing." }
+            ],
+            "Thailand": [
+                { name: "Grand Palace", description: "Former royal residence in Bangkok with magnificent architecture." },
+                { name: "Phi Phi Islands", description: "Stunning islands in the Andaman Sea known for beaches and clear waters." },
+                { name: "Wat Arun", description: "Temple of Dawn located on the Chao Phraya River." },
+                { name: "Chiang Mai Old City", description: "Cultural and religious center of Northern Thailand." },
+                { name: "Ayutthaya", description: "Historic ruins of the ancient Siamese capital." },
+                { name: "Railay Beach", description: "Picturesque beach surrounded by limestone cliffs." },
+                { name: "Damnoen Saduak Floating Market", description: "Famous market where vendors sell goods from boats." },
+                { name: "Doi Inthanon", description: "Thailand's highest mountain with temples and nature trails." },
+                { name: "Similan Islands", description: "Known for world-class diving and marine life." },
+                { name: "Sanctuary of Truth", description: "All-wood building filled with sculptures based on traditional Buddhist and Hindu motifs." }
+            ],
+            "Malaysia": [
+                { name: "Petronas Towers", description: "Iconic twin skyscrapers in Kuala Lumpur." },
+                { name: "Batu Caves", description: "Limestone caves housing Hindu temples and shrines." },
+                { name: "Langkawi", description: "Island known for beaches, forests, and cable cars." },
+                { name: "Penang", description: "Famous for George Town and street food culture." },
+                { name: "Mount Kinabalu", description: "Tallest peak in Southeast Asia and a biodiversity hotspot." },
+                { name: "Cameron Highlands", description: "Hill station known for tea plantations and cool weather." },
+                { name: "Sunway Lagoon", description: "Large amusement and water park in Selangor." },
+                { name: "Melaka Historic City", description: "UNESCO site with colonial heritage buildings." },
+                { name: "Perhentian Islands", description: "Diving and snorkeling paradise with clear waters." },
+                { name: "Genting Highlands", description: "Resort town with casinos, theme parks, and cool weather." }
+            ],
+            "Vietnam": [
+                { name: "Ha Long Bay", description: "UNESCO World Heritage site with thousands of limestone islands." },
+                { name: "Hoi An Ancient Town", description: "Well-preserved trading port from the 15th to 19th century." },
+                { name: "Cu Chi Tunnels", description: "Extensive underground tunnels used during the Vietnam War." },
+                { name: "Hue Imperial City", description: "Historic citadel and former capital." },
+                { name: "Phong Nha-Ke Bang", description: "Cave system in central Vietnam, including Son Doong—the world's largest cave." },
+                { name: "Sapa", description: "Mountainous town known for rice terraces and ethnic minorities." },
+                { name: "Da Nang", description: "City with beaches and the Marble Mountains." },
+                { name: "Golden Bridge", description: "Famous pedestrian bridge held by giant stone hands." },
+                { name: "Mekong Delta", description: "River region with floating markets and boat tours." },
+                { name: "Ninh Binh", description: "Often called 'Ha Long Bay on land' with stunning karst formations." }
+            ],
+            "India": [
+                { name: "Taj Mahal", description: "Ivory-white marble mausoleum in Agra, symbol of eternal love." },
+                { name: "Jaipur", description: "Known as the 'Pink City' with stunning palaces and forts." },
+                { name: "Kerala Backwaters", description: "Scenic network of canals, rivers, and lakes in southern India." },
+                { name: "Varanasi", description: "Spiritual capital of India on the banks of the Ganges." },
+                { name: "Mysore Palace", description: "Historical palace in the city of Mysore." },
+                { name: "Hampi", description: "Ruins of a powerful Hindu empire, now a UNESCO site." },
+                { name: "Amritsar", description: "Home to the Golden Temple, a major Sikh pilgrimage site." },
+                { name: "Darjeeling", description: "Hill station famous for tea and scenic mountain views." },
+                { name: "Leh-Ladakh", description: "High-altitude desert with monasteries and breathtaking landscapes." },
+                { name: "Ranthambore National Park", description: "One of India's largest national parks and a tiger reserve." }
+            ],
+            "South Korea": [
+                { name: "Gyeongbokgung Palace", description: "Main royal palace of the Joseon dynasty in Seoul." },
+                { name: "Jeju Island", description: "Volcanic island with lava tubes, waterfalls, and beaches." },
+                { name: "Bukchon Hanok Village", description: "Traditional Korean houses preserved in Seoul." },
+                { name: "N Seoul Tower", description: "Iconic communication and observation tower." },
+                { name: "Lotte World", description: "Major recreation complex with indoor theme park." },
+                { name: "DMZ (Demilitarized Zone)", description: "Border area between North and South Korea, offering tours." },
+                { name: "Changdeokgung Palace", description: "UNESCO-listed palace known for its secret garden." },
+                { name: "Busan Haeundae Beach", description: "Popular beach in the port city of Busan." },
+                { name: "Gamcheon Culture Village", description: "Colorful hillside village in Busan known for art." },
+                { name: "Seoraksan National Park", description: "Famous for scenic mountains and hiking trails." }
+            ],
+            "Indonesia": [
+                { name: "Bali", description: "Island paradise known for beaches, temples, and rice terraces." },
+                { name: "Borobudur Temple", description: "Ancient Buddhist temple and the world's largest Buddhist monument." },
+                { name: "Komodo National Park", description: "Home to the famous Komodo dragons." },
+                { name: "Mount Bromo", description: "Active volcano with stunning sunrise views." },
+                { name: "Lake Toba", description: "Largest volcanic lake in the world." },
+                { name: "Ubud", description: "Cultural heart of Bali surrounded by jungle and rice paddies." },
+                { name: "Raja Ampat", description: "Diving paradise with coral reefs and marine biodiversity." },
+                { name: "Tana Toraja", description: "Cultural region known for traditional funeral ceremonies." },
+                { name: "Gili Islands", description: "Trio of small islands ideal for snorkeling and relaxation." },
+                { name: "Jakarta National Monument", description: "Iconic tower in the capital city symbolizing independence." }
+            ],
+            "Singapore": [
+                { name: "Gardens by the Bay", description: "Futuristic park with Supertree Grove and Cloud Forest." },
+                { name: "Marina Bay Sands", description: "Iconic hotel with the world's largest rooftop infinity pool." },
+                { name: "Sentosa Island", description: "Island resort with beaches, Universal Studios, and more." },
+                { name: "Merlion Park", description: "Famous statue that's part lion, part fish." },
+                { name: "Singapore Zoo", description: "One of the world's best rainforest zoos." },
+                { name: "Chinatown", description: "Vibrant district with food, shopping, and temples." },
+                { name: "Orchard Road", description: "Premier shopping belt with malls and boutiques." },
+                { name: "Singapore Flyer", description: "Giant Ferris wheel offering panoramic views." },
+                { name: "Botanic Gardens", description: "UNESCO World Heritage site and green escape in the city." },
+                { name: "Clarke Quay", description: "Riverside quay with vibrant nightlife and dining." }
+            ],
+            "Iran": [
+                { name: "Persepolis", description: "Ancient ceremonial capital of the Persian Empire." },
+                { name: "Naqsh-e Jahan Square", description: "One of the largest city squares in the world, in Isfahan." },
+                { name: "Golestan Palace", description: "A masterpiece of the Qajar era in Tehran." },
+                { name: "Nasir al-Mulk Mosque", description: "Known as the Pink Mosque, famous for colorful stained glass." },
+                { name: "Yazd Old City", description: "Ancient desert city with wind towers and adobe architecture." },
+                { name: "Mount Damavand", description: "Iran's highest peak and dormant volcano." },
+                { name: "Shah Cheragh", description: "Beautiful shrine in Shiraz illuminated with mirror mosaics." },
+                { name: "Kandovan Village", description: "Unique village with cave homes carved into mountains." },
+                { name: "Caspian Sea Coast", description: "Lush green northern Iran with beaches and forests." },
+                { name: "Tomb of Hafez", description: "Mausoleum of the beloved Persian poet in Shiraz." }
+            ]
+        };
+        
+        // Load places for the selected country
+        function loadPlaces() {
+            const places = placesDatabase[selectedCountry] || [];
+            const placesList = document.getElementById('places-list');
+            
+            // Clear any existing content
+            placesList.innerHTML = '';
+            
+            if (places.length === 0) {
+                placesList.innerHTML = '<tr><td colspan="3">No places found for this country.</td></tr>';
+                return;
+            }
+            
+            places.forEach((place, index) => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><input type="checkbox" id="place-${index}" class="place-checkbox" data-place="${place.name}"></td>
+                    <td>${place.name}</td>
+                    <td>${place.description}</td>
+                `;
+                placesList.appendChild(row);
+            });
+        }
+        
+        // Proceed with the selected places
+        function proceedWithSelection() {
+            const selectedPlaces = [];
+            document.querySelectorAll('.place-checkbox:checked').forEach(checkbox => {
+                selectedPlaces.push(checkbox.getAttribute('data-place'));
+            });
+            
+            if (selectedPlaces.length === 0) {
+                alert('Please select at least one place to visit!');
+                return;
+            }
+            
+            // Store selected places in localStorage
+            localStorage.setItem('selectedCountry', selectedCountry);
+            localStorage.setItem('selectedPlaces', JSON.stringify(selectedPlaces));
+            
+            // Redirect to the next page
+            window.location.href = `try2.html?country=${encodeURIComponent(selectedCountry)}`;
+        }
+        
+        // Initialize the page
+        if (selectedCountry) {
+            loadPlaces();
+        } else {
+            // Instead of redirecting, just show a message and handle gracefully
+            document.getElementById('country-heading').textContent = 'Please select a country first';
+            document.getElementById('places-list').innerHTML = '<tr><td colspan="3">No country selected. Please go back to country selection page.</td></tr>';
+        }
+    </script>
+</body>
+</html>

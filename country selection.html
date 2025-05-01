@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Your Country</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('file:///C:/Users/Jenoprabakar/OneDrive/Desktop/programs/WEB/bg country.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column; /* Stack elements vertically */
+        }
+
+        header {
+            padding: 10px;
+            text-align: right;
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-top: 50px;
+            font-family: "Times New Roman", Times, serif;
+        }
+
+        .destination-text {
+            font-size: 2rem;
+            text-align: center;
+            margin-top: 20px;
+            font-family: "Arial", sans-serif;
+            z-index: 2;
+        }
+
+        .slider-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .polaroid {
+            width: 250px;
+            height: 250px;
+            margin: 10px;
+            border: 10px solid white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transform: rotate(-10deg);
+            cursor: pointer;
+            transition: transform 0.3s ease-in-out;
+            text-align: center;
+        }
+
+        .polaroid img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .polaroid:hover {
+            transform: rotate(0deg) scale(1.1);
+        }
+
+        .polaroid p {
+            text-align: center;
+            color: black;
+            font-size: 1rem;
+            background-color: white;
+            padding: 5px;
+        }
+
+        .prev, .next {
+            position: absolute;
+            top: 50%;
+            background-color: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 24px;
+            z-index: 1;
+            transform: translateY(-50%);
+        }
+
+        .prev {
+            left: 10px;
+        }
+
+        .next {
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="homepage.html" style="color: white;">Home</a> |
+            <a href="about us.html" style="color: white;">About Us</a> | 
+            <a href="contact.html" style="color: white;">Contact</a> | 
+            <a href="userlogin.html" style="color: white;">Login/Sign In</a>
+        </div>
+    </header>
+
+
+        <div class="destination-text">
+            <p>Choose Your Destination</p>
+        </div>
+
+        <div id="slider-container" class="slider-container">
+            <!-- Country selection images will be here -->
+        </div>
+    </div>
+
+    <span class="prev" onclick="moveSlide(-1)">&#10094;</span>
+    <span class="next" onclick="moveSlide(1)">&#10095;</span>
+
+    <script>
+        const countries = [
+            [
+                { 
+                    name: 'China', 
+                    image: 'images/china.jpg'
+                },
+                { 
+                    name: 'Japan', 
+                    image: 'images/japan.jpg'
+                }
+            ],
+            [
+                { 
+                    name: 'Thailand', 
+                    image: 'images/thailand.jpg'
+                },
+                { 
+                    name: 'Malaysia', 
+                    image: 'images/malaysia.jpg'
+                }
+            ],
+            [
+                { 
+                    name: 'Vietnam', 
+                    image: 'images/vietnam.jpg'
+                },
+                { 
+                    name: 'India', 
+                    image: 'images/india.jpg'
+                }
+            ],
+            [
+                { 
+                    name: 'South Korea', 
+                    image: 'images/south_korea.jpg'
+                },
+                { 
+                    name: 'Indonesia', 
+                    image: 'images/indonesia.jpg'
+                }
+            ],
+            [
+                { 
+                    name: 'Singapore', 
+                    image: 'images/singapore.jpg'
+                },
+                { 
+                    name: 'Iran', 
+                    image: 'images/iran.jpg'
+                }
+            ]
+        ];
+
+        let currentSlide = 0;
+
+        function renderSlide() {
+            const sliderContainer = document.getElementById('slider-container');
+            sliderContainer.innerHTML = '';
+
+            const slideCountries = countries[currentSlide];
+            slideCountries.forEach(country => {
+                const polaroid = document.createElement('div');
+                polaroid.className = 'polaroid';
+                polaroid.innerHTML = `
+                    <img src="${country.image}" alt="${country.name}">
+                    <p>${country.name}</p>
+                `;
+                // Add click event to the entire polaroid
+                polaroid.addEventListener('click', () => selectCountry(country.name));
+                sliderContainer.appendChild(polaroid);
+            });
+        }
+
+        function selectCountry(countryName) {
+            // Redirect to transportation page with country parameter
+            window.location.href = `try.html?country=${encodeURIComponent(countryName)}`;
+        }
+
+        function moveSlide(step) {
+            currentSlide = (currentSlide + step + countries.length) % countries.length;
+            renderSlide();
+        }
+
+        // Initialize the page
+        renderSlide();
+    </script>
+</body>
+</html>

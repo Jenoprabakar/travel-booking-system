@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Travel Booking</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        h3 {
+            color: #222;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 24px;
+            border-bottom: 2px solid #8541dd;
+            padding-bottom: 10px;
+        }
+
+        h4 {
+            color: #3a3636de;
+            margin: 15px 0;
+            font-size: 18px;
+            border-left: 4px solid #8541dd;
+            padding-left: 10px;
+        }
+
+        .payment-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #8541dd;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8541dd;
+            box-shadow: 0 0 0 2px rgba(133, 65, 221, 0.2);
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .payment-method:hover {
+            background-color: #e8f5e9;
+        }
+
+        .payment-method.selected {
+            background-color: #e8f5e9;
+            border: 2px solid #8541dd;
+        }
+
+        .payment-method input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .card-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 25px;
+            background-color: #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        button {
+            background: #8541dd;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background: #7030a0;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        #processing-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .processing-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #8541dd;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        #success-message {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container" class="container">
+        <h3>Payment Details</h3>
+        
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+            <h4>Booking Summary</h4>
+            <div id="booking-details">
+                <p><strong>Country:</strong> <span id="summary-country"></span></p>
+                <p><strong>Selected Places:</strong> <span id="summary-places"></span></p>
+                <p><strong>Duration:</strong> <span id="summary-days"></span> days</p>
+                <p><strong>Number of Travelers:</strong> <span id="summary-persons"></span></p>
+                <p><strong>International Transport:</strong> <span id="summary-international"></span></p>
+                <p><strong>Local Transport:</strong> <span id="summary-local"></span></p>
+                <p><strong>Total Amount:</strong> <span id="summary-amount"></span></p>
+            </div>
+        </div>
+        
+        <!-- Payment Form (Simplified version of your existing form) -->
+        <form id="payment-form">
+            <!-- Personal Details -->
+            <div class="form-section">
+                <h4>Personal Details</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" required>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Method Selection -->
+            <div class="form-section">
+                <h4>Payment Method</h4>
+                <div class="payment-methods">
+                    <div class="payment-method selected" data-method="credit-card">
+                        <input type="radio" name="payment-method" id="credit-card" value="credit-card" checked>
+                        <label for="credit-card">Credit Card</label>
+                    </div>
+                    <div class="payment-method" data-method="debit-card">
+                        <input type="radio" name="payment-method" id="debit-card" value="debit-card">
+                        <label for="debit-card">Debit Card</label>
+                    </div>
+                    <div class="payment-method" data-method="paypal">
+                        <input type="radio" name="payment-method" id="paypal" value="paypal">
+                        <label for="paypal">PayPal</label>
+                    </div>
+                </div>
+                
+                <!-- Credit Card Details -->
+                <div id="credit-card-details">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-holder">Card Holder Name</label>
+                            <input type="text" id="card-holder" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry-date">Expiry Date</label>
+                            <input type="text" id="expiry-date" placeholder="MM/YY" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123" required>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="buttons-container">
+                <button type="button" id="back-button">Back to Booking</button>
+                <button type="submit" id="pay-button">Pay Now</button>
+            </div>
+        </form>
+        
+        <!-- Success Message -->
+        <div id="success-message" style="display: none;">
+            <h4>Payment Successful!</h4>
+            <p>Your booking has been confirmed. A confirmation email has been sent to your email address.</p>
+            <p>Booking Reference: <strong id="booking-ref"></strong></p>
+            <div class="buttons-container">
+                <button type="button" id="home-button">Return to Home</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Processing Overlay (simplified) -->
+    <div id="processing-overlay" style="display: none;">
+        <div class="processing-content">
+            <div class="spinner"></div>
+            <h3>Processing Payment</h3>
+            <p>Please do not close this window...</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load booking details from localStorage
+            loadBookingSummary();
+            
+            // Payment method selection
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    // Unselect all methods
+                    document.querySelectorAll('.payment-method').forEach(m => {
+                        m.classList.remove('selected');
+                    });
+                    
+                    // Select clicked method
+                    this.classList.add('selected');
+                    
+                    // Check the radio button
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    // Toggle credit card details visibility
+                    if (radio.value === 'paypal') {
+                        document.getElementById('credit-card-details').style.display = 'none';
+                    } else {
+                        document.getElementById('credit-card-details').style.display = 'block';
+                    }
+                });
+            });
+            
+            // Back button
+            document.getElementById('back-button').addEventListener('click', function() {
+                window.history.back();
+            });
+            
+            // Payment form submission
+            document.getElementById('payment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                processPayment();
+            });
+            
+            // Home button
+            document.getElementById('home-button').addEventListener('click', function() {
+                window.location.href = 'index.html';
+            });
+        });
+        
+        function loadBookingSummary() {
+            // Retrieve data from localStorage
+            const selectedCountry = localStorage.getItem('selectedCountry') || '';
+            const selectedPlaces = JSON.parse(localStorage.getItem('selectedPlaces') || '[]');
+            const numDays = localStorage.getItem('numDays') || '0';
+            const numPersons = localStorage.getItem('numPersons') || '0';
+            const startPoint = localStorage.getItem('startPoint') || '';
+            
+            // Get transportation details
+            const internationalTransport = localStorage.getItem('internationalTransport') || '';
+            const localTransport = localStorage.getItem('localTransport') || '';
+            const transportationCost = localStorage.getItem('transportationCost') || '0.00';
+            
+            // Update the summary display
+            document.getElementById('summary-country').textContent = selectedCountry;
+            document.getElementById('summary-places').textContent = selectedPlaces.join(', ');
+            document.getElementById('summary-days').textContent = numDays;
+            document.getElementById('summary-persons').textContent = numPersons;
+            
+            // Get transportation names from their codes (this should match your transportation data)
+            const internationalOptions = {
+                "air": "Flight",
+                "train": "Train",
+                "cruise": "Cruise Ship"
+            };
+            
+            const localOptions = {
+                "standard": "Public Transportation",
+                "comfort": "Private Car/Taxi",
+                "premium": "Luxury Transport",
+                "economy": "Rental Scooter/Bike"
+            };
+            
+            document.getElementById('summary-international').textContent = internationalOptions[internationalTransport] || internationalTransport;
+            document.getElementById('summary-local').textContent = localOptions[localTransport] || localTransport;
+            document.getElementById('summary-amount').textContent = `$${transportationCost}`;
+            
+            // Create a bookingState object to be used by the payment page
+            const bookingState = {
+                country: selectedCountry,
+                days: numDays,
+                persons: numPersons,
+                places: selectedPlaces,
+                startPoint: startPoint,
+                internationalTransport: internationalTransport,
+                localTransport: localTransport,
+                totalCost: parseFloat(transportationCost)
+            };
+            
+            // Store the combined booking state
+            localStorage.setItem('bookingState', JSON.stringify(bookingState));
+        }
+        
+        function processPayment() {
+            // Show processing overlay
+            document.getElementById('processing-overlay').style.display = 'flex';
+            
+            // Simulate payment processing (2 second delay)
+            setTimeout(() => {
+                // Hide overlay
+                document.getElementById('processing-overlay').style.display = 'none';
+                
+                // Hide form and show success message
+                document.getElementById('payment-form').style.display = 'none';
+                document.getElementById('success-message').style.display = 'block';
+                
+                // Generate booking reference based on country
+                const country = localStorage.getItem('selectedCountry') || '';
+                const prefix = country.substring(0, 2).toUpperCase();
+                const number = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+                const bookingRef = `${prefix}${number}`;
+                
+                document.getElementById('booking-ref').textContent = bookingRef;
+                
+                // Clear booking data when payment is complete
+                clearBookingData();
+            }, 2000);
+        }
+        
+        function clearBookingData() {
+            // Keep bookingState for the confirmation page, but clear the individual items
+            localStorage.removeItem('selectedPlaces');
+            localStorage.removeItem('numDays');
+            localStorage.removeItem('numPersons');
+            localStorage.removeItem('startPoint');
+            localStorage.removeItem('internationalTransport');
+            localStorage.removeItem('localTransport');
+            localStorage.removeItem('transportationCost');
+        }
+    </script>
+</body>
+</html>

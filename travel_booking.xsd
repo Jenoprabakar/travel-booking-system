@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <xs:element name="TravelBookingSystem">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="Booking" type="BookingType" maxOccurs="unbounded"/>
+      </xs:sequence>
+    </xs:complexType>
+  </xs:element>
+
+  <xs:complexType name="BookingType">
+    <xs:sequence>
+      <xs:element name="Customer" type="CustomerType"/>
+      <xs:element name="Itinerary" type="ItineraryType"/>
+      <xs:element name="Payment" type="PaymentType"/>
+    </xs:sequence>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+    <xs:attribute name="status" use="optional" default="pending">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="confirmed"/>
+          <xs:enumeration value="pending"/>
+          <xs:enumeration value="cancelled"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="CustomerType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="Email" type="xs:string"/>
+      <xs:element name="Phone" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="ItineraryType">
+    <xs:sequence>
+      <xs:element name="Trip" type="TripType" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="TripType">
+    <xs:sequence>
+      <xs:element name="Departure" type="DepartureArrivalType" minOccurs="0"/>
+      <xs:element name="Arrival" type="DepartureArrivalType" minOccurs="0"/>
+      <xs:element name="CheckIn" type="xs:date" minOccurs="0"/>
+      <xs:element name="CheckOut" type="xs:date" minOccurs="0"/>
+      <xs:element name="Property" type="PropertyType" minOccurs="0"/>
+      <xs:element name="Room" type="RoomType" minOccurs="0"/>
+      <xs:element name="PickUp" type="DepartureArrivalType" minOccurs="0"/>
+      <xs:element name="DropOff" type="DepartureArrivalType" minOccurs="0"/>
+      <xs:element name="Vehicle" type="VehicleType" minOccurs="0"/>
+      <xs:element name="Carrier" type="xs:string" minOccurs="0"/>
+      <xs:element name="FlightNumber" type="xs:string" minOccurs="0"/>
+      <xs:element name="Class" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+    <xs:attribute name="type" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="flight"/>
+          <xs:enumeration value="hotel"/>
+          <xs:enumeration value="car"/>
+          <xs:enumeration value="train"/>
+          <xs:enumeration value="cruise"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="id" type="xs:ID" use="required"/>
+  </xs:complexType>
+
+  <xs:complexType name="DepartureArrivalType">
+    <xs:sequence>
+      <xs:element name="Location" type="LocationType"/>
+      <xs:element name="DateTime" type="xs:dateTime"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="LocationType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="code" type="xs:string" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:complexType name="PropertyType">
+    <xs:sequence>
+      <xs:element name="Name" type="xs:string"/>
+      <xs:element name="Address" type="AddressType"/>
+      <xs:element name="Rating" type="xs:integer"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="AddressType">
+    <xs:sequence>
+      <xs:element name="Street" type="xs:string"/>
+      <xs:element name="City" type="xs:string"/>
+      <xs:element name="PostalCode" type="xs:string"/>
+      <xs:element name="Country" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="RoomType">
+    <xs:sequence>
+      <xs:element name="Guests" type="xs:integer"/>
+      <xs:element name="BedType" type="xs:string"/>
+    </xs:sequence>
+    <xs:attribute name="type" default="standard">
+      <xs:simpleType>
+        <xs:restriction base="xs:string">
+          <xs:enumeration value="standard"/>
+          <xs:enumeration value="deluxe"/>
+          <xs:enumeration value="suite"/>
+          <xs:enumeration value="penthouse"/>
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="VehicleType">
+    <xs:sequence>
+      <xs:element name="Make" type="xs:string"/>
+      <xs:element name="Model" type="xs:string"/>
+      <xs:element name="Type" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentType">
+    <xs:sequence>
+      <xs:element name="Method" type="xs:string"/>
+      <xs:element name="Currency" type="xs:string"/>
+      <xs:element name="TotalAmount" type="xs:decimal"/>
+      <xs:element name="Details" type="PaymentDetailsType" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="PaymentDetailsType">
+    <xs:sequence>
+      <xs:element name="CardType" type="xs:string" minOccurs="0"/>
+      <xs:element name="LastFourDigits" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  
+</xs:schema>

@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transportation Selection</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('images/transport-bg.jpg');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+            min-height: 100vh;
+        }
+
+        header {
+            padding: 10px;
+            text-align: right;
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        header a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        header a:hover {
+            color: #FFD700;
+        }
+
+        header span {
+            color: white;
+            margin: 0 5px;
+        }
+
+        .container {
+            padding-top: 80px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        h1, h2 {
+            text-align: center;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+        }
+
+        .trip-details {
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+        }
+
+        .summary {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .summary-item {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 10px;
+        }
+
+        .transport-options {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .transport-category {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .transport-option {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .transport-option:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-5px);
+        }
+
+        .transport-option.selected {
+            border: 2px solid #4CAF50;
+            background-color: rgba(76, 175, 80, 0.2);
+        }
+
+        .option-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .option-name {
+            font-weight: bold;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .option-price {
+            color: #FFD700;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+
+        .option-description {
+            font-size: 0.9rem;
+            margin: 10px 0;
+        }
+
+        .total-section {
+            background-color: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .total-row {
+            display: flex;
+            justify-content: space-between;
+            margin: 10px 0;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .total-price {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4CAF50;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: block;
+            margin: 30px auto 0;
+            width: 250px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 20px;
+            height: 20px;
+            background-color: #4CAF50;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .transport-option.selected .checkmark {
+            display: flex;
+        }
+
+        .days-selector {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            gap: 10px;
+        }
+
+        .day-option {
+            padding: 10px 20px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .day-option:hover, .day-option.selected {
+            background-color: #4CAF50;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="home.html">Home</a>
+            <span>|</span>
+            <a href="about-us.html">About Us</a>
+            <span>|</span>
+            <a href="contact.html">Contact</a>
+            <span>|</span>
+            <a href="user-login.html">Login/Sign In</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1>Plan Your Transportation</h1>
+        
+        <div class="trip-details">
+            <h2>Trip Details</h2>
+            <div class="summary">
+                <div class="summary-item">
+                    <p>Destination</p>
+                    <h3 id="selectedCountry">Loading...</h3>
+                </div>
+                <div class="summary-item">
+                    <p>Number of Days</p>
+                    <div class="days-selector">
+                        <div class="day-option" data-days="3" onclick="selectDays(3)">3 Days</div>
+                        <div class="day-option" data-days="5" onclick="selectDays(5)">5 Days</div>
+                        <div class="day-option" data-days="7" onclick="selectDays(7)">7 Days</div>
+                        <div class="day-option" data-days="10" onclick="selectDays(10)">10 Days</div>
+                    </div>
+                </div>
+                <div class="summary-item">
+                    <p>Total Travelers</p>
+                    <h3 id="totalTravelers">Retrieving...</h3>
+                </div>
+            </div>
+        </div>
+
+        <div class="transport-options">
+            <div class="transport-category">
+                <h2>International Transport</h2>
+                <div class="options-grid">
+                    <div class="transport-option" data-type="international" data-name="Economy Flight" data-price="400" onclick="selectTransport(this)">
+                        <div class="checkmark">✓</div>
+                        <div class="option-details">
+                            <span class="option-name">Economy Flight</span>
+                            <span class="option-description">Standard economy class with basic amenities</span>
+                            <span class="option-price">$400 per person</span>
+                        </div>
+                    </div>
+                    <div class="transport-option" data-type="international" data-name="Business Flight" data-price="800" onclick="selectTransport(this)">
+                        <div class="checkmark">✓</div>
+                        <div class="option-details">
+                            <span class="option-name">Business Flight</span>
+                            <span class="option-description">Premium experience with extra legroom and better meals</span>
+                            <span class="option-price">$800 per person</span>
+                        </div>
+                    </div>
+                    <div class="transport-option" data-type="international" data-name="First Class Flight" data-price="1200" onclick="selectTransport(this)">
+                        <div class="checkmark">✓</div>
+                        <div class="option-details">
+                            <span class="option-name">First Class Flight</span>
+                            <span class="option-description">Luxurious travel with full-flat beds and premium service</span>
+                            <span class="option-price">$1200 per person</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="transport-category">
+                <h2>Local Transport</h2>
+                <div class="options-grid">
+                    <div class="transport-option" data-type="local" data-name="Public Transportation" data-price="50" onclick="selectTransport(this)">
+                        <div class="checkmark">✓</div>
+                        <div class="option-details">
+                            <span class="option-name">Public Transportation</span>
+                            <span class="option-description">Buses, trains, and subways with unlimited travel pass</span>
+                            <span class="option-price">$50 per person</span>
+                        </div>
+                    </div>
+                    <div class="transport-option" data-type="local" data-name="Private Car" data-price="200" onclick="selectTransport(this)">
+                        <div class="checkmark">✓</div>
+                        <div class="option-details">
+                            <span class="option-name">Private Car</span>
+                            <span class="option-description">Comfortable car with driver at your disposal</span>
+                            <span class="option-price">$200 per person</span>
+                        </div>
+                    </div>
+                    <div class="transport-option" data-type="local" data-name="Luxury Vehicle" data-price="300" onclick="selectTransport(this)">
+                        <div class="checkmark">✓</div>
+                        <div class="option-details">
+                            <span class="option-name">Luxury Vehicle</span>
+                            <span class="option-description">Premium vehicle with professional driver and VIP service</span>
+                            <span class="option-price">$300 per person</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="total-section">
+            <h2>Trip Summary</h2>
+            <div class="total-row">
+                <span>International Transport:</span>
+                <span id="internationalCost">$0</span>
+            </div>
+            <div class="total-row">
+                <span>Local Transport:</span>
+                <span id="localCost">$0</span>
+            </div>
+            <div class="total-row">
+                <span>Number of Days:</span>
+                <span id="daysSelected">0 days</span>
+            </div>
+            <div class="total-row">
+                <span>Base Package Cost:</span>
+                <span id="packageCost">$0</span>
+            </div>
+            <div class="total-row">
+                <span class="total-price">Total Cost:</span>
+                <span id="totalCost" class="total-price">$0</span>
+            </div>
+        </div>
+
+        <button onclick="proceedToDestinations()">Continue to Destinations</button>
+    </div>
+
+    <script>
+        // Global variables
+        let selectedInternationalTransport = null;
+        let selectedLocalTransport = null;
+        let selectedDays = 3; // Default
+        let totalTravelers = 0;
+        let selectedCountry = '';
+        let baseCostPerDay = 100; // Base cost per person per day
+        
+        // On page load
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get country from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            selectedCountry = urlParams.get('country') || 'Unknown Country';
+            document.getElementById('selectedCountry').textContent = selectedCountry;
+            
+            // Try to get traveler information from localStorage
+            try {
+                const bookingState = JSON.parse(localStorage.getItem('bookingState')) || {};
+                const male = parseInt(bookingState.male) || 0;
+                const female = parseInt(bookingState.female) || 0;
+                const children = parseInt(bookingState.children) || 0;
+                totalTravelers = male + female + children;
+                
+                if (totalTravelers > 0) {
+                    document.getElementById('totalTravelers').textContent = totalTravelers;
+                } else {
+                    // If no data in localStorage, set a default
+                    totalTravelers = 2;
+                    document.getElementById('totalTravelers').textContent = totalTravelers + ' (default)';
+                }
+                
+                // If country was saved in bookingState, use that (as a fallback)
+                if (bookingState.country && !selectedCountry) {
+                    selectedCountry = bookingState.country;
+                    document.getElementById('selectedCountry').textContent = selectedCountry;
+                }
+            } catch (e) {
+                console.error('Error loading traveler data:', e);
+                // Set default
+                totalTravelers = 2;
+                document.getElementById('totalTravelers').textContent = totalTravelers + ' (default)';
+            }
+            
+            // Select default options
+            selectDays(3);
+            
+            // Select first options by default
+            const firstInternationalOption = document.querySelector('.transport-option[data-type="international"]');
+            const firstLocalOption = document.querySelector('.transport-option[data-type="local"]');
+            
+            if (firstInternationalOption) selectTransport(firstInternationalOption);
+            if (firstLocalOption) selectTransport(firstLocalOption);
+            
+            // Set base country cost
+            setBasePackageCost();
+            
+            // Update totals
+            updateTotalCost();
+        });
+        
+        function selectTransport(element) {
+            const transportType = element.getAttribute('data-type');
+            const transportName = element.getAttribute('data-name');
+            const transportPrice = parseFloat(element.getAttribute('data-price'));
+            
+            // Remove selected class from all options of this type
+            document.querySelectorAll(`.transport-option[data-type="${transportType}"]`).forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Add selected class to this option
+            element.classList.add('selected');
+            
+            // Update the selected transport
+            if (transportType === 'international') {
+                selectedInternationalTransport = {
+                    name: transportName,
+                    price: transportPrice
+                };
+                document.getElementById('internationalCost').textContent = `$${(transportPrice * totalTravelers).toFixed(2)}`;
+            } else if (transportType === 'local') {
+                selectedLocalTransport = {
+                    name: transportName,
+                    price: transportPrice
+                };
+                document.getElementById('localCost').textContent = `$${(transportPrice * totalTravelers).toFixed(2)}`;
+            }
+            
+            // Update totals
+            updateTotalCost();
+        }
+        
+        function selectDays(days) {
+            selectedDays = days;
+            
+            // Update UI
+            document.querySelectorAll('.day-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            document.querySelector(`.day-option[data-days="${days}"]`).classList.add('selected');
+            document.getElementById('daysSelected').textContent = `${days} days`;
+            
+            // Update base package cost
+            setBasePackageCost();
+            
+            // Update totals
+            updateTotalCost();
+        }
+        
+        function setBasePackageCost() {
+            // Base package cost depends on country, days, and travelers
+            let multiplier = 1;
+            
+            // Different countries have different costs
+            if (['Japan', 'Singapore', 'South Korea'].includes(selectedCountry)) {
+                multiplier = 1.5; // More expensive countries
+            } else if (['Thailand', 'Vietnam', 'Malaysia'].includes(selectedCountry)) {
+                multiplier = 0.8; // Less expensive countries
+            }
+            
+            const packageCost = baseCostPerDay * selectedDays * totalTravelers * multiplier;
+            document.getElementById('packageCost').textContent = `$${packageCost.toFixed(2)}`;
+        }
+        
+        function updateTotalCost() {
+            let totalCost = 0;
+            
+            // Add international transport cost
+            if (selectedInternationalTransport) {
+                totalCost += selectedInternationalTransport.price * totalTravelers;
+            }
+            
+            // Add local transport cost
+            if (selectedLocalTransport) {
+                totalCost += selectedLocalTransport.price * totalTravelers;
+            }
+            
+            // Add base package cost
+            let multiplier = 1;
+            if (['Japan', 'Singapore', 'South Korea'].includes(selectedCountry)) {
+                multiplier = 1.5;
+            } else if (['Thailand', 'Vietnam', 'Malaysia'].includes(selectedCountry)) {
+                multiplier = 0.8;
+            }
+            totalCost += baseCostPerDay * selectedDays * totalTravelers * multiplier;
+            
+            // Update the total cost display
+            document.getElementById('totalCost').textContent = `$${totalCost.toFixed(2)}`;
+        }
+        
+        function proceedToDestinations() {
+            // Validate selections
+            if (!selectedInternationalTransport || !selectedLocalTransport) {
+                alert('Please select both international and local transport options');
+                return;
+            }
+            
+            // Save the booking state to localStorage
+            const bookingState = JSON.parse(localStorage.getItem('bookingState')) || {};
+            
+            // Update with transport selections
+            const updatedBookingState = {
+                ...bookingState,
+                country: selectedCountry,
+                days: selectedDays,
+                travelers: totalTravelers,
+                internationalTransport: selectedInternationalTransport,
+                localTransport: selectedLocalTransport,
+                totalCost: parseFloat(document.getElementById('totalCost').textContent.replace('$', ''))
+            };
+            
+            localStorage.setItem('bookingState', JSON.stringify(updatedBookingState));
+            
+            // Proceed to destinations page
+            window.location.href = `destinations.html?country=${encodeURIComponent(selectedCountry)}`;
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment - Travel Booking</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+            padding: 25px;
+            width: 90%;
+            max-width: 1000px;
+        }
+
+        h3 {
+            color: #222;
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 24px;
+            border-bottom: 2px solid #8541dd;
+            padding-bottom: 10px;
+        }
+
+        h4 {
+            color: #3a3636de;
+            margin: 15px 0;
+            font-size: 18px;
+            border-left: 4px solid #8541dd;
+            padding-left: 10px;
+        }
+
+        .payment-summary {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-left: 4px solid #8541dd;
+        }
+
+        .form-section {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #8541dd;
+            box-shadow: 0 0 0 2px rgba(133, 65, 221, 0.2);
+        }
+
+        .payment-methods {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            background-color: #f2f2f2;
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .payment-method:hover {
+            background-color: #e8f5e9;
+        }
+
+        .payment-method.selected {
+            background-color: #e8f5e9;
+            border: 2px solid #8541dd;
+        }
+
+        .payment-method input[type="radio"] {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        .card-icons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .card-icon {
+            width: 40px;
+            height: 25px;
+            background-color: #ddd;
+            border-radius: 4px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .buttons-container {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 25px;
+        }
+
+        button {
+            background: #8541dd;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            cursor: pointer;
+            border-radius: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        button:hover {
+            background: #7030a0;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        button.secondary {
+            background: #6c757d;
+        }
+
+        #processing-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .processing-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+        }
+
+        .spinner {
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #8541dd;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        #success-message {
+            display: none;
+            text-align: center;
+            padding: 30px;
+            background-color: #e8f5e9;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .form-group {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="main-container" class="container">
+        <h3>Payment Details</h3>
+        
+        <!-- Payment Summary -->
+        <div class="payment-summary">
+            <h4>Booking Summary</h4>
+            <div id="booking-details">
+                <!-- This will be filled from localStorage -->
+                <p><strong>Country:</strong> <span id="summary-country">Japan</span></p>
+                <p><strong>Duration:</strong> <span id="summary-days">3</span> days</p>
+                <p><strong>Total Amount:</strong> <span id="summary-amount">$1,200.00</span></p>
+            </div>
+        </div>
+        
+        <!-- Payment Form -->
+        <form id="payment-form">
+            <!-- Personal Details -->
+            <div class="form-section">
+                <h4>Personal Details</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="full-name">Full Name</label>
+                        <input type="text" id="full-name" required>
+                        <div class="error" id="name-error">Please enter your full name</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" required>
+                        <div class="error" id="email-error">Please enter a valid email address</div>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone">Phone Number</label>
+                        <input type="tel" id="phone" required>
+                        <div class="error" id="phone-error">Please enter a valid phone number</div>
+                    </div>
+                    <div class="form-group">
+                        <label for="address">Address</label>
+                        <input type="text" id="address" required>
+                        <div class="error" id="address-error">Please enter your address</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Payment Method Selection -->
+            <div class="form-section">
+                <h4>Payment Method</h4>
+                <div class="payment-methods">
+                    <div class="payment-method selected" data-method="credit-card">
+                        <input type="radio" name="payment-method" id="credit-card" value="credit-card" checked>
+                        <label for="credit-card">Credit Card</label>
+                    </div>
+                    <div class="payment-method" data-method="debit-card">
+                        <input type="radio" name="payment-method" id="debit-card" value="debit-card">
+                        <label for="debit-card">Debit Card</label>
+                    </div>
+                    <div class="payment-method" data-method="paypal">
+                        <input type="radio" name="payment-method" id="paypal" value="paypal">
+                        <label for="paypal">PayPal</label>
+                    </div>
+                </div>
+                
+                <!-- Credit Card Details (shown by default) -->
+                <div id="credit-card-details">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="card-number">Card Number</label>
+                            <input type="text" id="card-number" placeholder="1234 5678 9012 3456" required>
+                            <div class="error" id="card-number-error">Please enter a valid card number</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="card-holder">Card Holder Name</label>
+                            <input type="text" id="card-holder" required>
+                            <div class="error" id="card-holder-error">Please enter the cardholder name</div>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiry-date">Expiry Date</label>
+                            <input type="text" id="expiry-date" placeholder="MM/YY" required>
+                            <div class="error" id="expiry-error">Please enter a valid expiry date</div>
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123" required>
+                            <div class="error" id="cvv-error">Please enter a valid CVV</div>
+                        </div>
+                    </div>
+                    <div class="card-icons">
+                        <div class="card-icon">VISA</div>
+                        <div class="card-icon">MC</div>
+                        <div class="card-icon">AMEX</div>
+                        <div class="card-icon">DISC</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Buttons -->
+            <div class="buttons-container">
+                <button type="button" id="back-button" class="secondary">Back to Booking</button>
+                <button type="submit" id="pay-button">Pay Now</button>
+            </div>
+        </form>
+        
+        <!-- Success Message -->
+        <div id="success-message">
+            <h4>Payment Successful!</h4>
+            <p>Your booking has been confirmed. A confirmation email has been sent to your email address.</p>
+            <p>Booking Reference: <strong id="booking-ref">JP123456</strong></p>
+            <div class="buttons-container">
+                <button type="button" id="home-button">Return to Home</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Processing Overlay -->
+    <div id="processing-overlay">
+        <div class="processing-content">
+            <div class="spinner"></div>
+            <h3>Processing Payment</h3>
+            <p>Please do not close this window...</p>
+        </div>
+    </div>
+
+    <script>
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load booking details from localStorage (if available)
+            loadBookingSummary();
+            
+            // Payment method selection
+            document.querySelectorAll('.payment-method').forEach(method => {
+                method.addEventListener('click', function() {
+                    // Unselect all methods
+                    document.querySelectorAll('.payment-method').forEach(m => {
+                        m.classList.remove('selected');
+                    });
+                    
+                    // Select clicked method
+                    this.classList.add('selected');
+                    
+                    // Check the radio button
+                    const radio = this.querySelector('input[type="radio"]');
+                    radio.checked = true;
+                    
+                    // Handle payment method change
+                    handlePaymentMethodChange(radio.value);
+                });
+            });
+            
+            // Back button
+            document.getElementById('back-button').addEventListener('click', function() {
+                // In a real application, this would go back to the booking page
+                // For now, let's just simulate going back with browser history
+                window.history.back();
+            });
+            
+            // Payment form submission
+            document.getElementById('payment-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Validate form
+                if (validateForm()) {
+                    // Show processing overlay
+                    processPayment();
+                }
+            });
+            
+            // Home button (after successful payment)
+            document.getElementById('home-button').addEventListener('click', function() {
+                // In a real app, this would redirect to the home page
+                window.location.href = 'index.html';
+            });
+            
+            // Initialize form formatting
+            initializeFormFormatting();
+        });
+        
+        function loadBookingSummary() {
+            // In a real application, you would load this from localStorage or a server
+            // For this example, we'll use placeholder data
+            
+            // Check if we have data from the previous page
+            try {
+                const bookingState = JSON.parse(localStorage.getItem('bookingState'));
+                if (bookingState) {
+                    document.getElementById('summary-country').textContent = bookingState.country;
+                    document.getElementById('summary-days').textContent = bookingState.days;
+                    document.getElementById('summary-amount').textContent = `$${bookingState.totalCost.toFixed(2)}`;
+                }
+            } catch (e) {
+                console.log('No booking data found or error parsing data');
+                // Keep default values for demo purposes
+            }
+        }
+        
+        function handlePaymentMethodChange(method) {
+            // For a more complete application, you would show/hide different payment forms
+            // For this example, we'll just keep it simple
+            console.log(`Payment method changed to: ${method}`);
+            
+            // If PayPal is selected, hide credit card details
+            const cardDetails = document.getElementById('credit-card-details');
+            
+            if (method === 'paypal') {
+                cardDetails.style.display = 'none';
+            } else {
+                cardDetails.style.display = 'block';
+            }
+        }
+        
+        function validateForm() {
+            // Reset all error messages
+            document.querySelectorAll('.error').forEach(err => {
+                err.style.display = 'none';
+            });
+            
+            let isValid = true;
+            
+            // Personal details validation
+            const fullName = document.getElementById('full-name').value.trim();
+            if (fullName === '') {
+                document.getElementById('name-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            const email = document.getElementById('email').value.trim();
+            if (email === '' || !isValidEmail(email)) {
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            const phone = document.getElementById('phone').value.trim();
+            if (phone === '') {
+                document.getElementById('phone-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            const address = document.getElementById('address').value.trim();
+            if (address === '') {
+                document.getElementById('address-error').style.display = 'block';
+                isValid = false;
+            }
+            
+            // Payment method validation
+            const selectedMethod = document.querySelector('input[name="payment-method"]:checked').value;
+            
+            if (selectedMethod !== 'paypal') {
+                // Card details validation (if not PayPal)
+                const cardNumber = document.getElementById('card-number').value.trim().replace(/\s/g, '');
+                if (cardNumber === '' || !isValidCardNumber(cardNumber)) {
+                    document.getElementById('card-number-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                const cardHolder = document.getElementById('card-holder').value.trim();
+                if (cardHolder === '') {
+                    document.getElementById('card-holder-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                const expiryDate = document.getElementById('expiry-date').value.trim();
+                if (expiryDate === '' || !isValidExpiryDate(expiryDate)) {
+                    document.getElementById('expiry-error').style.display = 'block';
+                    isValid = false;
+                }
+                
+                const cvv = document.getElementById('cvv').value.trim();
+                if (cvv === '' || !isValidCVV(cvv)) {
+                    document.getElementById('cvv-error').style.display = 'block';
+                    isValid = false;
+                }
+            }
+            
+            return isValid;
+        }
+        
+        function isValidEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+        
+        function isValidCardNumber(cardNumber) {
+            // Basic validation: check if it's only digits and has 13-19 digits
+            return /^\d{13,19}$/.test(cardNumber);
+        }
+        
+        function isValidExpiryDate(expiryDate) {
+            // Check format MM/YY
+            if (!/^\d{2}\/\d{2}$/.test(expiryDate)) {
+                return false;
+            }
+            
+            const [month, year] = expiryDate.split('/');
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear() % 100; // Get last 2 digits of year
+            const currentMonth = currentDate.getMonth() + 1; // getMonth() is 0-indexed
+            
+            const expMonth = parseInt(month);
+            const expYear = parseInt(year);
+            
+            // Check if month is valid (1-12)
+            if (expMonth < 1 || expMonth > 12) {
+                return false;
+            }
+            
+            // Check if the expiry date is in the future
+            if (expYear < currentYear || (expYear === currentYear && expMonth < currentMonth)) {
+                return false;
+            }
+            
+            return true;
+        }
+        
+        function isValidCVV(cvv) {
+            // CVV is typically 3-4 digits
+            return /^\d{3,4}$/.test(cvv);
+        }
+        
+        function processPayment() {
+            // Show processing overlay
+            document.getElementById('processing-overlay').style.display = 'flex';
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                // Hide overlay
+                document.getElementById('processing-overlay').style.display = 'none';
+                
+                // Show success message
+                document.getElementById('payment-form').style.display = 'none';
+                document.getElementById('success-message').style.display = 'block';
+                
+                // Generate random booking reference
+                const bookingRef = generateBookingReference();
+                document.getElementById('booking-ref').textContent = bookingRef;
+                
+                // In a real app, you would clear the booking data from localStorage
+                localStorage.removeItem('bookingState');
+            }, 2000);
+        }
+        
+        function generateBookingReference() {
+            // Generate a random booking reference
+            const prefix = 'JP'; // Country code prefix
+            const number = Math.floor(100000 + Math.random() * 900000); // 6-digit number
+            return `${prefix}${number}`;
+        }
+        
+        function initializeFormFormatting() {
+            // Format card number with spaces
+            const cardNumberInput = document.getElementById('card-number');
+            cardNumberInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                let formattedValue = '';
+                
+                for (let i = 0; i < value.length; i++) {
+                    if (i > 0 && i % 4 === 0) {
+                        formattedValue += ' ';
+                    }
+                    formattedValue += value[i];
+                }
+                
+                e.target.value = formattedValue;
+            });
+            
+            // Format expiry date as MM/YY
+            const expiryDateInput = document.getElementById('expiry-date');
+            expiryDateInput.addEventListener('input', function(e) {
+                let value = e.target.value.replace(/\D/g, '');
+                
+                if (value.length > 2) {
+                    e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                } else {
+                    e.target.value = value;
+                }
+            });
+            
+            // Limit CVV to 3-4 digits
+            const cvvInput = document.getElementById('cvv');
+            cvvInput.addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4);
+            });
+        }
+    </script>
+</body>
+</html>

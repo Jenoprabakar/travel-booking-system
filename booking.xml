@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/xsl" href="booking_to_html.xslt"?>
+<!DOCTYPE TravelBookingSystem SYSTEM "travel_booking.dtd">
+<TravelBookingSystem>
+  <Booking id="B12345" status="confirmed">
+    <Customer>
+      <Name>John Smith</Name>
+      <Email>john.smith@example.com</Email>
+      <Phone>+1-555-123-4567</Phone>
+    </Customer>
+    <Itinerary>
+      <Trip type="flight" id="F9876">
+        <Departure>
+          <Location code="JFK">John F. Kennedy International Airport</Location>
+          <DateTime>2025-06-15T08:30:00</DateTime>
+        </Departure>
+        <Arrival>
+          <Location code="LHR">London Heathrow Airport</Location>
+          <DateTime>2025-06-15T20:45:00</DateTime>
+        </Arrival>
+        <Carrier>British Airways</Carrier>
+        <FlightNumber>BA178</FlightNumber>
+        <Class>Business</Class>
+      </Trip>
+      <Trip type="hotel" id="H5432">
+        <CheckIn>2025-06-15</CheckIn>
+        <CheckOut>2025-06-20</CheckOut>
+        <Property>
+          <Name>The Savoy</Name>
+          <Address>
+            <Street>Strand</Street>
+            <City>London</City>
+            <PostalCode>WC2R 0EZ</PostalCode>
+            <Country>United Kingdom</Country>
+          </Address>
+          <Rating>5</Rating>
+        </Property>
+        <Room type="suite">
+          <Guests>1</Guests>
+          <BedType>King</BedType>
+        </Room>
+      </Trip>
+      <Trip type="car" id="C7890">
+        <PickUp>
+          <Location>London Heathrow Airport</Location>
+          <DateTime>2025-06-15T21:30:00</DateTime>
+        </PickUp>
+        <DropOff>
+          <Location>The Savoy, London</Location>
+          <DateTime>2025-06-20T12:00:00</DateTime>
+        </DropOff>
+        <Vehicle>
+          <Make>Audi</Make>
+          <Model>A6</Model>
+          <Type>Sedan</Type>
+        </Vehicle>
+      </Trip>
+    </Itinerary>
+    <Payment>
+      <Method>Credit Card</Method>
+      <Currency>USD</Currency>
+      <TotalAmount>3250.75</TotalAmount>
+      <Details>
+        <CardType>Visa</CardType>
+        <LastFourDigits>4321</LastFourDigits>
+      </Details>
+    </Payment>
+  </Booking>
+</TravelBookingSystem>

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Your Dream Vacation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-image: url('file:///C:/Users/Jenoprabakar/OneDrive/Desktop/programs/WEB/Screenshot%202025-01-22%20221347.png');
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
+
+        header {
+            padding: 10px;
+            text-align: right;
+            position: absolute;
+            top: 10px;
+            width: 100%;
+            z-index: 1;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+
+        header a {
+            text-decoration: none;
+            color: white;
+            font-size: 16px;
+            margin: 0 10px;
+            transition: color 0.3s;
+        }
+
+        header a:hover {
+            color: #FFD700;
+        }
+
+        header span {
+            color: white;
+            margin: 0 5px;
+        }
+
+        form {
+            text-align: center;
+            margin-top: 100px;
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        input, select {
+            padding: 8px;
+            margin: 8px 0;
+            width: 90%;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        label {
+            font-size: 1.2rem;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: green;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border-radius: 5px;
+            width: 90%;
+        }
+
+        button:hover {
+            background-color: darkgreen;
+        }
+
+        #totalTravelers {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: yellow;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div>
+            <a href="home.html">Home</a>
+            <span>|</span>
+            <a href="about us.html">About Us</a>
+            <span>|</span>
+            <a href="contact.html">Contact</a>
+            <span>|</span>
+        </div>
+    </header>
+
+    <form id="bookingForm">
+    <h1>Book Your Trip Now</h1>
+
+    <label for="from">Traveling From:</label><br>
+    <input type="text" id="from" name="from" placeholder="Enter your departure city" required><br>
+
+    <label for="departure">Departure Date:</label><br>
+    <input type="date" id="departure" name="departure" required><br>
+
+    <label for="return">Return Date:</label><br>
+    <input type="date" id="return" name="return" required><br>
+
+    <label for="male">Number of Males:</label><br>
+    <input type="number" id="male" name="male" min="0" required oninput="updateTotalTravelers()"><br>
+
+    <label for="female">Number of Females:</label><br>
+    <input type="number" id="female" name="female" min="0" required oninput="updateTotalTravelers()"><br>
+
+    <label for="children">Number of Children:</label><br>
+    <input type="number" id="children" name="children" min="0" required oninput="updateTotalTravelers()"><br>
+
+    <p id="totalTravelers">Total Travelers: 0</p>
+
+    <button type="submit">Next➡️select country</button>
+</form>
+
+
+   <script>
+    function updateTotalTravelers() {
+        let male = parseInt(document.getElementById("male").value) || 0;
+        let female = parseInt(document.getElementById("female").value) || 0;
+        let children = parseInt(document.getElementById("children").value) || 0;
+        let total = male + female + children;
+
+        document.getElementById("totalTravelers").textContent = "Total Travelers: " + total;
+    }
+
+    document.getElementById("bookingForm").onsubmit = function(event) {
+        event.preventDefault();
+
+        let departureDate = new Date(document.getElementById("departure").value);
+        let returnDate = new Date(document.getElementById("return").value);
+
+        if (returnDate <= departureDate) {
+            alert("Return date must be after the departure date.");
+            return;
+        }
+
+        // Calculate number of days based on selected dates
+        let timeDiff = returnDate - departureDate;
+        let numDays = Math.ceil(timeDiff / (1000 * 60 * 60 * 24));
+        
+        // Get from location and number of travelers
+        let fromLocation = document.getElementById("from").value;
+        let maleCount = parseInt(document.getElementById("male").value) || 0;
+        let femaleCount = parseInt(document.getElementById("female").value) || 0;
+        let childrenCount = parseInt(document.getElementById("children").value) || 0;
+        let totalTravelers = maleCount + femaleCount + childrenCount;
+        
+        // Store in localStorage
+        localStorage.setItem('startPoint', fromLocation);
+        localStorage.setItem('numPersons', totalTravelers);
+        localStorage.setItem('numDays', numDays);
+
+        window.location.href = "cou selection.html"; 
+    };
+</script>
+</body>
+</html>
